@@ -1,20 +1,21 @@
-# Use the official Nginx Alpine image
-FROM nginx:alpine
+# Base image with Debian
+FROM debian:stable-slim
 
-# Remove default Nginx content
-RUN rm -rf /usr/share/nginx/html/*
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Copy your index.html to Nginx web root
-COPY index.html /usr/share/nginx/html/index.html
+# Install nginx + nodejs + npm
+RUN apt-get update && \
+    apt-get install -y nginx nodejs npm && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Expose port 54321
-EXPOSE 54321
+# Remove default nginx site
+RUN rm -rf /var/www/html/*
 
-# Update Nginx config to listen on 54321
-RUN sed -i 's/listen       80;/listen       54321;/' /etc/nginx/conf.d/default.conf
+# Copy your static files
+COPY index.html /var/www/html/index.html
 
-# Start Nginx in foreground
+# Expose HTTP port
+EXPOSE 80
+
+# Run nginx in foreground
 CMD ["nginx", "-g", "daemon off;"]
-
-# docker build -t gateway-test .
-# docker run -p 54321:80 gateway-test

@@ -1,9 +1,7 @@
-version: "3.8"
-
 services:
   web:
-    image: nginx:alpine
+    build: .
     ports:
       - "54321:80"
     volumes:
-      - ./:/usr/share/nginx/html:ro
+      - ./index.html:/var/www/html/index.html
