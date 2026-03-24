@@ -18,85 +18,122 @@ html, body {
   font-family:sans-serif;
 }
 
-#taskbar{
-  display:none;
-  background:#111;
-  border-bottom:1px solid #444;
-  padding:5px;
-  overflow-x:auto;
-  white-space:nowrap;
-}
-
-#taskbar button{
-  font-size:13px;
-  padding:6px 10px;
-  margin-right:5px;
-}
-
 #main{
   height:100%;
   display:flex;
   flex-direction:column;
-  align-items:center;
 }
+
+/* ===== Carousel ===== */
 
 #myCarousel {
-  width:100%;
   height:33vh;
-  max-height:400px;
-  overflow:hidden;
   flex-shrink:0;
+  transition:height 0.3s ease;
 }
 
-#myCarousel .carousel-inner,
-#myCarousel .carousel-item,
-#myCarousel img {
+#myCarousel.compact {
+  height:8vh;
+}
+
+.carousel-inner,
+.carousel-item {
   height:100%;
 }
 
-#myCarousel img {
-  object-fit:cover;
+.carousel-item {
+  position:relative;
 }
+
+.carousel-bg {
+  position:absolute;
+  width:100%;
+  height:100%;
+  background-size:cover;
+  background-position:center;
+  filter:blur(6px);
+  transform:scale(1.1);
+}
+
+.carousel-overlay {
+  position:absolute;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+}
+
+.carousel-caption {
+  z-index:2;
+}
+
+/* ===== Scroll Area ===== */
 
 #contentScroll{
   flex:1;
-  width:100%;
   overflow-y:auto;
-  padding:20px;
 }
 
-button{
-  padding:10px 18px;
-  margin:6px;
-  font-size:15px;
-  cursor:pointer;
-}
-
-#codeList{
-  width:300px;
-  max-height:300px;
-  overflow-y:auto;
-  border:1px solid #444;
-  padding:10px;
-}
-
-#frame{
+#contentScroll.hidden {
   display:none;
+}
+
+.section{
+  height:33vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:40px;
+  border-bottom:1px solid #222;
+  cursor:pointer;
+  transition:background 0.2s;
+}
+
+.section:hover{
+  background:#111;
+}
+
+/* ===== Iframe ===== */
+
+#iframeContainer {
+  display:none;
+  flex:1;
+}
+
+#iframeContainer.active {
+  display:block;
+}
+
+#iframe {
   width:100%;
   height:100%;
   border:none;
 }
 
-.section{
-  width:80%;
-  max-width:900px;
-  margin:50px auto;
-  padding-bottom:20px;
-  border-bottom:1px solid #333;
+/* ===== Back Button ===== */
+
+#backBtn {
+  position:absolute;
+  top:10px;
+  right:10px;
+  z-index:999;
+  padding:8px 16px;
+  font-size:14px;
+  border:none;
+  border-radius:20px;
+  background:rgba(255,255,255,0.15);
+  color:#fff;
+  backdrop-filter:blur(6px);
+  cursor:pointer;
+  display:none;
+  transition:all 0.2s;
 }
 
-.section h3{
-  margin-bottom:10px;
+#backBtn:hover{
+  background:rgba(255,255,255,0.3);
+}
+
+#backBtn.show {
+  display:block;
 }
 
 </style>
@@ -104,64 +141,12 @@ button{
 
 <body>
 
-<div id="taskbar"></div>
+<button id="backBtn" onclick="goBack()">← Back</button>
 
 <div id="main">
 
-<!-- Carousel -->
-<div id="myCarousel" class="carousel slide" data-ride="carousel">
-
-  <ol class="carousel-indicators">
-    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-    <li data-target="#myCarousel" data-slide-to="1"></li>
-    <li data-target="#myCarousel" data-slide-to="2"></li>
-    <li data-target="#myCarousel" data-slide-to="3"></li>
-    <li data-target="#myCarousel" data-slide-to="4"></li>
-  </ol>
-
-  <div class="carousel-inner">
-
-    <div class="carousel-item active">
-      <img src="https://via.placeholder.com/1200x400?text=Code+Server">
-      <div class="carousel-caption">
-        <h3>Code Server</h3>
-        <p>Browser-based development environment.</p>
-      </div>
-    </div>
-
-    <div class="carousel-item">
-      <img src="https://via.placeholder.com/1200x400?text=VNC+Server">
-      <div class="carousel-caption">
-        <h3>VNC Server</h3>
-        <p>Remote desktop in your browser.</p>
-      </div>
-    </div>
-
-    <div class="carousel-item">
-      <img src="https://via.placeholder.com/1200x400?text=Gitea">
-      <div class="carousel-caption">
-        <h3>Gitea</h3>
-        <p>Self-hosted Git service.</p>
-      </div>
-    </div>
-
-    <div class="carousel-item">
-      <img src="https://via.placeholder.com/1200x400?text=Ollama">
-      <div class="carousel-caption">
-        <h3>Ollama</h3>
-        <p>Local AI model hosting.</p>
-      </div>
-    </div>
-
-    <div class="carousel-item">
-      <img src="https://via.placeholder.com/1200x400?text=SecureDrop">
-      <div class="carousel-caption">
-        <h3>SecureDrop</h3>
-        <p>Anonymous whistleblower platform.</p>
-      </div>
-    </div>
-
-  </div>
+<!-- ===== Carousel ===== -->
+<div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="3000">
 
   <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
     <span class="carousel-control-prev-icon"></span>
@@ -171,186 +156,103 @@ button{
     <span class="carousel-control-next-icon"></span>
   </a>
 
-</div>
+  <div class="carousel-inner">
 
-<!-- Scrollable content -->
-<div id="contentScroll">
-
-  <div id="contentInner">
-
-    <h2>Main Servers</h2>
-    <div id="primaryServers"></div>
-
-    <h2>Code Servers</h2>
-    <div id="codeList"></div>
-
-    <button id="refreshBtn">Refresh</button>
-    <div id="status">Checking servers...</div>
-
-    <!-- Sections -->
-    <div class="section">
-      <h3>Code Server</h3>
-      <p>Full VS Code-like development environment accessible from your browser.</p>
+    <div class="carousel-item active">
+      <div class="carousel-bg" style="background-image:url('images/code.png')"></div>
+      <div class="carousel-overlay"></div>
+      <div class="carousel-caption"><h2>Code Server</h2></div>
     </div>
 
-    <div class="section">
-      <h3>VNC Server</h3>
-      <p>Access a full desktop session remotely using VNC over web.</p>
+    <div class="carousel-item">
+      <div class="carousel-bg" style="background-image:url('images/vnc.png')"></div>
+      <div class="carousel-overlay"></div>
+      <div class="carousel-caption"><h2>VNC Server</h2></div>
     </div>
 
-    <div class="section">
-      <h3>Gitea</h3>
-      <p>Lightweight Git hosting with repositories, issues, and CI support.</p>
+    <div class="carousel-item">
+      <div class="carousel-bg" style="background-image:url('images/gitea.png')"></div>
+      <div class="carousel-overlay"></div>
+      <div class="carousel-caption"><h2>Gitea</h2></div>
     </div>
 
-    <div class="section">
-      <h3>Ollama</h3>
-      <p>Run local LLMs and AI workloads efficiently.</p>
+    <div class="carousel-item">
+      <div class="carousel-bg" style="background-image:url('images/ollama.png')"></div>
+      <div class="carousel-overlay"></div>
+      <div class="carousel-caption"><h2>Ollama</h2></div>
     </div>
 
-    <div class="section">
-      <h3>SecureDrop</h3>
-      <p>Secure, anonymous communication channel for whistleblowers.</p>
+    <div class="carousel-item">
+      <div class="carousel-bg" style="background-image:url('images/securedrop.png')"></div>
+      <div class="carousel-overlay"></div>
+      <div class="carousel-caption"><h2>SecureDrop</h2></div>
     </div>
 
   </div>
+</div>
 
-  <!-- duplicate for infinite scroll -->
-  <div id="contentClone"></div>
+<!-- ===== Scroll Sections ===== -->
+<div id="contentScroll">
+
+  <div class="section" onclick="openService('https://code.briarblackrose.online')">
+    <h2>Code Server</h2>
+    <p>Browser-based development environment.</p>
+  </div>
+
+  <div class="section" onclick="openService('https://vnc.briarblackrose.online')">
+    <h2>VNC Server</h2>
+    <p>Remote desktop access.</p>
+  </div>
+
+  <div class="section" onclick="openService('https://gitea.briarblackrose.online')">
+    <h2>Gitea</h2>
+    <p>Self-hosted Git service.</p>
+  </div>
+
+  <div class="section" onclick="openService('https://wow.briarblackrose.online')">
+    <h2>Ollama</h2>
+    <p>Local AI model hosting.</p>
+  </div>
+
+  <div class="section" onclick="openService('https://truth.briarblackrose.online')">
+    <h2>SecureDrop</h2>
+    <p>Anonymous submission system.</p>
+  </div>
 
 </div>
 
+<!-- ===== Iframe ===== -->
+<div id="iframeContainer">
+  <iframe id="iframe"></iframe>
 </div>
 
-<iframe id="frame"></iframe>
+</div>
 
 <script>
 
-const TIMEOUT = 5000
-const CHECK_INTERVAL = 10000
-const CODE_COUNT = 20
+const carousel = document.getElementById("myCarousel")
+const content = document.getElementById("contentScroll")
+const iframeContainer = document.getElementById("iframeContainer")
+const iframe = document.getElementById("iframe")
+const backBtn = document.getElementById("backBtn")
 
-const primaryServers = [
-  {name:"Ollama", url:"https://wow.briarblackrose.online"},
-  {name:"Securedrop", url:"https://truth.briarblackrose.online"}
-]
+function openService(url){
+  iframe.src = url
 
-const statusEl = document.getElementById("status")
-const primaryDiv = document.getElementById("primaryServers")
-const codeDiv = document.getElementById("codeList")
-const frame = document.getElementById("frame")
-const taskbar = document.getElementById("taskbar")
-const main = document.getElementById("main")
-
-let allButtons = []
-
-function openServer(url){
-  frame.src = url
-  frame.style.display = "block"
-  main.style.display = "none"
-  taskbar.style.display = "block"
-  allButtons.forEach(btn=>taskbar.appendChild(btn))
+  carousel.classList.add("compact")
+  content.classList.add("hidden")
+  iframeContainer.classList.add("active")
+  backBtn.classList.add("show")
 }
 
-function createButton(name,url){
-  const btn = document.createElement("button")
-  btn.textContent = name
-  btn.onclick = ()=>openServer(url)
-  allButtons.push(btn)
-  return btn
+function goBack(){
+  iframe.src = ""
+
+  carousel.classList.remove("compact")
+  content.classList.remove("hidden")
+  iframeContainer.classList.remove("active")
+  backBtn.classList.remove("show")
 }
-
-function checkServer(url){
-  return new Promise(resolve=>{
-    const iframe = document.createElement("iframe")
-    iframe.style.display="none"
-    iframe.src=url+"?check="+Date.now()
-
-    let finished=false
-
-    const timer=setTimeout(()=>{
-      if(!finished){
-        finished=true
-        document.body.removeChild(iframe)
-        resolve(false)
-      }
-    },TIMEOUT)
-
-    iframe.onload=()=>{
-      if(!finished){
-        finished=true
-        clearTimeout(timer)
-        document.body.removeChild(iframe)
-        resolve(true)
-      }
-    }
-
-    iframe.onerror=()=>{
-      if(!finished){
-        finished=true
-        clearTimeout(timer)
-        document.body.removeChild(iframe)
-        resolve(false)
-      }
-    }
-
-    document.body.appendChild(iframe)
-  })
-}
-
-async function checkAll(){
-  statusEl.textContent="Checking servers..."
-  primaryDiv.innerHTML=""
-  codeDiv.innerHTML=""
-  allButtons=[]
-
-  for(const server of primaryServers){
-    const online=await checkServer(server.url)
-    if(online){
-      primaryDiv.appendChild(createButton(server.name,server.url))
-    }
-  }
-
-  const baseCodeURL = "https://code.briarblackrose.online"
-  const baseOnline = await checkServer(baseCodeURL)
-
-  if(baseOnline){
-    codeDiv.appendChild(createButton("Code", baseCodeURL))
-  }
-
-  for(let i=1;i<=CODE_COUNT;i++){
-    const url = `https://code${i}.briarblackrose.online`
-    const online = await checkServer(url)
-    if(online){
-      codeDiv.appendChild(createButton("Code "+i, url))
-    }
-  }
-
-  statusEl.textContent="Scan complete"
-}
-
-document.getElementById("refreshBtn").onclick=checkAll
-setInterval(checkAll,CHECK_INTERVAL)
-checkAll()
-
-// Infinite scroll illusion
-const scrollEl = document.getElementById("contentScroll")
-const inner = document.getElementById("contentInner")
-const clone = document.getElementById("contentClone")
-
-clone.innerHTML = inner.innerHTML
-
-scrollEl.addEventListener("scroll", () => {
-  const threshold = 50
-
-  if(scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - threshold){
-    scrollEl.scrollTop = 1
-  }
-
-  if(scrollEl.scrollTop <= 0){
-    scrollEl.scrollTop = scrollEl.scrollHeight - scrollEl.clientHeight - 1
-  }
-})
 
 </script>
 
