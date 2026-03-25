@@ -15,7 +15,7 @@ RUN rm -rf /var/www/html/*
 COPY index.html /var/www/html/index.html
 
 # Expose HTTP port
-EXPOSE 80
+# EXPOSE 80
 
 # Run nginx in foreground
 CMD ["nginx", "-g", "daemon off;"]

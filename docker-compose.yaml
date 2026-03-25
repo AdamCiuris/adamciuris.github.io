@@ -5,3 +5,4 @@ services:
       - "${HOST_PORT}:80"
     volumes:
       - ./index.html:/var/www/html/index.html
+      - ./images:/var/www/html/images
