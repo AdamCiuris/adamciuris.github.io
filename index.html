@@ -199,7 +199,7 @@ html, body {
     <p>Browser-based development environment.</p>
   </div>
 
-  <div class="section" onclick="openService('https://vnc.briarblackrose.online')">
+  <div class="section" onclick="openService_newTab('https://vnc.briarblackrose.online')">
     <h2>VNC Server</h2>
     <p>Remote desktop access.</p>
   </div>
@@ -243,7 +243,39 @@ function openService(url){
   content.classList.add("hidden")
   iframeContainer.classList.add("active")
   backBtn.classList.add("show")
+
+  // fallback if iframe is blocked
+  setTimeout(() => {
+    try {
+      if (!iframe.contentWindow || iframe.contentWindow.length === 0) {
+      //  window.open(url, "_blank", "noopener,noreferrer")
+      }
+    } catch (e) {
+      // window.open(url, "_blank", "noopener,noreferrer")
+    }
+  }, 1500)
 }
+
+function openService_newTab(url){
+  iframe.src = url
+
+  carousel.classList.add("compact")
+  content.classList.add("hidden")
+  iframeContainer.classList.add("active")
+  backBtn.classList.add("show")
+
+  // fallback if iframe is blocked
+  setTimeout(() => {
+    try {
+      if (!iframe.contentWindow || iframe.contentWindow.length === 0) {
+      window.open(url, "_blank", "noopener,noreferrer")
+      }
+    } catch (e) {
+      window.open(url, "_blank", "noopener,noreferrer")
+    }
+  }, 1500)
+}
+
 
 function goBack(){
   iframe.src = ""
